@@ -1,15 +1,9 @@
 'use client';
-import {
-  useLayoutEffect,
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-} from 'react';
+import { useLayoutEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { BookData } from '../utils/types';
 import { locateHighlight } from '../utils/locateHighlight';
-import { initConvoWithAnchors } from '../utils/apis';
+import { initConvoWithLocation } from '../utils/apis';
 
 const BookPanel = ({ bookData }: { bookData: BookData }) => {
   const {
@@ -112,12 +106,12 @@ const BookPanel = ({ bookData }: { bookData: BookData }) => {
 
   const handleChatButtonClick = async () => {
     try {
-      const anchors = locateHighlight();
-      if (!anchors) {
+      const highlightLocation = locateHighlight(bookID);
+      if (!highlightLocation) {
         throw new Error("Couldn't locate the highlighted text.");
       }
 
-      const supabaseData = await initConvoWithAnchors(anchors);
+      const supabaseData = await initConvoWithLocation(highlightLocation);
       console.log(supabaseData);
       const conversationID = supabaseData.id;
 
@@ -125,8 +119,8 @@ const BookPanel = ({ bookData }: { bookData: BookData }) => {
         throw new Error("Couldn't start a new conversation.");
       } else {
         console.log(
-          'Chat Click Success! Highlight anchors:',
-          anchors,
+          'Chat Click Success! Highlight highlightLocation:',
+          highlightLocation,
           'Supabase gave us this convo id to use:',
           conversationID
         );

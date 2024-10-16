@@ -11,20 +11,17 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const book_uuid = searchParams.get('uuid');
+  const chatID = searchParams.get('chatID');
 
-  if (!book_uuid) {
-    return NextResponse.json(
-      { error: 'Book UUID is required' },
-      { status: 400 }
-    );
+  if (!chatID) {
+    return NextResponse.json({ error: 'Chat ID is required' }, { status: 400 });
   }
 
   try {
     const { data, error } = await supabase
-      .from('books')
-      .select('*')
-      .eq('uuid', book_uuid)
+      .from('conversations')
+      .select('chat')
+      .eq('id', chatID)
       .single();
 
     if (error) {
@@ -33,12 +30,13 @@ export async function GET(request: Request) {
 
     if (!data) {
       return NextResponse.json(
-        { error: `Book with UUID ${book_uuid} not found` },
+        { error: `Chat with id ${chatID} not found` },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(data);
+    const chatHistory = data.chat;
+    return NextResponse.json(chatHistory);
   } catch (error) {
     console.error('Error fetching book:', error);
     return NextResponse.json(

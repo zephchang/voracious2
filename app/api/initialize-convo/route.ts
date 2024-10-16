@@ -14,18 +14,27 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(request: Request) {
   try {
-    const { anchors } = await request.json();
-
+    const { startDiv, startOffset, endDiv, endOffset, contentType, bookKey } =
+      await request.json();
+    console.log(
+      'LOCATION STUFF',
+      startDiv,
+      startOffset,
+      endDiv,
+      endOffset,
+      contentType,
+      bookKey
+    );
     const { data, error } = await supabase
       .from('conversations')
       .insert([
         {
-          start_div: anchors.startDiv,
-          start_offset: anchors.startOffset,
-          end_div: anchors.endDiv,
-          end_offset: anchors.endOffset,
-          content_type: anchors.contentType,
-          // TODO: Add book_id when available
+          start_div: startDiv,
+          start_offset: startOffset,
+          end_div: endDiv,
+          end_offset: endOffset,
+          content_type: contentType,
+          book_key: bookKey, //this is foreign key
         },
       ])
       .select('id');

@@ -1,4 +1,4 @@
-export const locateHighlight = () => {
+export const locateHighlight = (bookID: string) => {
   try {
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) return; //is this neccesary?
@@ -26,16 +26,19 @@ export const locateHighlight = () => {
         ? 'raw_text'
         : 'rewritten_text';
 
-    const anchors = {
+    const bookKey = bookID;
+
+    const highlightLocation = {
       startDiv,
       startOffset,
       endDiv,
       endOffset,
       contentType,
+      bookKey,
     };
 
-    return anchors;
+    return highlightLocation;
   } catch (error) {
-    console.error('Error finding highlight anchors:', error);
+    console.error('Error finding highlight highlightLocation:', error);
   }
 };
