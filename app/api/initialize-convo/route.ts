@@ -14,8 +14,17 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(request: Request) {
   try {
-    const { startDiv, startOffset, endDiv, endOffset, contentType, bookKey } =
-      await request.json();
+    const {
+      highlightText,
+      contextText,
+      startDiv,
+      startOffset,
+      endDiv,
+      endOffset,
+      contentType,
+      bookKey,
+    } = await request.json();
+
     console.log(
       'LOCATION STUFF',
       startDiv,
@@ -29,6 +38,8 @@ export async function POST(request: Request) {
       .from('conversations')
       .insert([
         {
+          highlight_text: highlightText,
+          context_text: contextText,
           start_div: startDiv,
           start_offset: startOffset,
           end_div: endDiv,

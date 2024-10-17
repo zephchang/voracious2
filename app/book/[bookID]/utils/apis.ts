@@ -1,3 +1,6 @@
+import { MessageStream } from '@anthropic-ai/sdk/lib/MessageStream.mjs';
+import { OpenaiMessageList } from './types';
+
 export async function fetchBookContent({ uuid }: { uuid: string }) {
   const baseUrl =
     process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
@@ -17,6 +20,8 @@ export async function fetchBookContent({ uuid }: { uuid: string }) {
 }
 
 export async function initConvoWithLocation({
+  highlightText,
+  contextText,
   startDiv,
   startOffset,
   endDiv,
@@ -24,6 +29,8 @@ export async function initConvoWithLocation({
   contentType,
   bookKey,
 }: {
+  highlightText: string;
+  contextText: string;
   startDiv: number;
   startOffset: number;
   endDiv: number;
@@ -40,6 +47,8 @@ export async function initConvoWithLocation({
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
+      highlightText,
+      contextText,
       startDiv,
       startOffset,
       endDiv,
@@ -75,7 +84,7 @@ export async function fetchRehydrateHighlight(chatID: string) {
   return response.json();
 }
 
-export async function fetchChatHistory(chatID: string) {
+export async function fetchChatHistory({ chatID }: { chatID: string }) {
   console.log('FETCH CHAT ID CHECK', chatID);
   const baseUrl =
     process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
@@ -97,6 +106,36 @@ export async function fetchChatHistory(chatID: string) {
 
   if (!response.ok) {
     throw new Error('Failed to fetch chat history');
+  }
+
+  return response.json();
+}
+
+export async function getAIResponse({
+  messagesWithUser,
+  chatID,
+}: {
+  messagesWithUser: OpenaiMessageList;
+  chatID: string;
+}) {
+  const baseUrl =
+    process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+
+  console.log('TEST TEST TEST', messagesWithUser);
+
+  const response = await fetch(`${baseUrl}/api/get-ai-response`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      messagesWithUser,
+      chatID,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to do get AI response');
   }
 
   return response.json();

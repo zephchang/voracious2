@@ -106,12 +106,33 @@ const BookPanel = ({ bookData }: { bookData: BookData }) => {
 
   const handleChatButtonClick = async () => {
     try {
+      // Generate (1) highlight text (2) highlight location (3) highlight context --> send that all to the db to initialize conversation
+      const highlightText = window.getSelection()?.toString();
+      if (!highlightText) throw new Error('No highlight text selected');
+
       const highlightLocation = locateHighlight(bookID);
       if (!highlightLocation) {
-        throw new Error("Couldn't locate the highlighted text.");
+        throw new Error('LocateHighlight util failed us,.');
       }
 
-      const supabaseData = await initConvoWithLocation(highlightLocation);
+      const { startDiv, endDiv, contentType } = highlightLocation;
+
+      const contextParas = contentType === 'raw_text' ? rawText : rewrittenText;
+
+      const contextText = contextParas
+        .slice(
+          Math.max(0, startDiv - 1),
+          Math.min(contextParas.length + 1, endDiv + 2)
+        )
+        .join('\n');
+
+      const convoData = {
+        highlightText,
+        ...highlightLocation,
+        contextText,
+      };
+
+      const supabaseData = await initConvoWithLocation(convoData);
       console.log(supabaseData);
       const conversationID = supabaseData.id;
 

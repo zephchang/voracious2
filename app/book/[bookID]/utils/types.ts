@@ -13,3 +13,10 @@ export interface ConvoData {
   end_div: number;
   end_offset: number;
 }
+
+export interface OpenaiMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export type OpenaiMessageList = OpenaiMessage[];
