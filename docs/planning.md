@@ -1,9 +1,16 @@
 To Dos:
 
-- get the UI working I think API route needs to update the DB
-- get websockets working
+- on user highlight keep scroll where it is. Maybe even keep highlight where it is potentially.
 
-- then go do minis
+- focus to user type
+
+- formatting for AI response
+
+- then go do minis ?? do I actualyl need to do this. I think it's the wrong UI paradigm.
+
+- I need streaming
+
+- I need to be able to change the window size by dragging
 
   -------- CHORES -----------
 
@@ -15,3 +22,5 @@ TODO: on chat button click, slow load of the chat panel is actually annoying. Co
 TODO: refactor API fetches so that they handle supabase datacleanup on the API route side (clean interfaces plz)
 
 TODO: hm interesting design choice re: anchors. Do you want to rehydrate context and highlight already on the db side? or just pure anchors and rehydrate on chat render
+
+TODO: refactor the supabase context book attribute to be book_context — clearer.

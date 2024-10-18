@@ -49,35 +49,33 @@ export const ChatClient = ({
    * - await API response (will send back full convo), and update chatMessages state
    */
 
+  useEffect(() => {
+    console.log('chatMessages updated:', chatMessages);
+  }, [chatMessages]);
+
   const handleSendMessage = async () => {
+    console.log('chatMessages CHECK', chatMessages);
     const userMessage = textareaRef.current?.value.trim();
 
-    console.log(userMessage);
     if (userMessage) {
-      const messagesWithUser: OpenaiMessageList = [
-        ...chatMessages,
-        {
-          role: 'user',
-          content: userMessage,
-        },
-      ];
-
-      console.log(
-        'this is chat messages now we are sending to AI response',
-        messagesWithUser
-      );
-
       if (textareaRef.current) {
         textareaRef.current.value = '';
       }
+      setChatMessages((prevMessages) => {
+        return [
+          ...prevMessages,
+          {
+            role: 'user',
+            content: userMessage,
+          },
+        ];
+      });
 
-      const { newMessages } = await getAIResponse({
-        messagesWithUser,
-        chatID,
-      }); //note: this is all chat Messages including the user message which was appended one step before.
+      const { aiResponse } = await getAIResponse({ userMessage, chatID });
 
-      console.log(newMessages);
-      setChatMessages(newMessages);
+      setChatMessages((prevMessages) => {
+        return [...prevMessages, { role: 'assistant', content: aiResponse }];
+      });
     }
   };
 
@@ -103,7 +101,6 @@ export const ChatClient = ({
   }, []);
 
   const renderMessages = (chatHistory: OpenaiMessageList) => {
-    console.log('THIS IS CHAT HISTORY, CAN WE MAP?', chatHistory);
     return chatHistory.map((message, index) => {
       const roleStyling =
         message.role === 'user'

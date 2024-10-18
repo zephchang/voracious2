@@ -14,7 +14,7 @@ export interface ConvoData {
   end_offset: number;
 }
 
-export interface OpenaiMessage {
+interface OpenaiMessage {
   role: 'user' | 'assistant';
   content: string;
 }

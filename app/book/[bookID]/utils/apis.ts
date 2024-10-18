@@ -112,16 +112,14 @@ export async function fetchChatHistory({ chatID }: { chatID: string }) {
 }
 
 export async function getAIResponse({
-  messagesWithUser,
+  userMessage,
   chatID,
 }: {
-  messagesWithUser: OpenaiMessageList;
+  userMessage: string;
   chatID: string;
 }) {
   const baseUrl =
     process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
-
-  console.log('TEST TEST TEST', messagesWithUser);
 
   const response = await fetch(`${baseUrl}/api/get-ai-response`, {
     method: 'POST',
@@ -129,7 +127,7 @@ export async function getAIResponse({
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      messagesWithUser,
+      userMessage,
       chatID,
     }),
   });
