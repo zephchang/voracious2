@@ -85,14 +85,8 @@ export async function fetchRehydrateHighlight(chatID: string) {
 }
 
 export async function fetchChatHistory({ chatID }: { chatID: string }) {
-  console.log('FETCH CHAT ID CHECK', chatID);
   const baseUrl =
     process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
-
-  console.log(
-    'URL CHECK',
-    `${baseUrl}/api/fetch-chat-history?chatID=${chatID}`
-  );
 
   const response = await fetch(
     `${baseUrl}/api/fetch-chat-history?chatID=${chatID}`,

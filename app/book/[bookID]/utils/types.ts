@@ -15,7 +15,7 @@ export interface ConvoData {
 }
 
 interface OpenaiMessage {
-  role: 'user' | 'assistant';
+  role: string;
   content: string;
 }
 

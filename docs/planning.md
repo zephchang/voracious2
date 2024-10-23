@@ -1,5 +1,11 @@
 To Dos:
 
+- On esc from chat panel, we need to fetch book panel scroll and then also set the window scroll to that level. This is more a JS imperative
+
+- create a bookScrollRef that we are going to pass up to the parent, and then the chat panel can use that to read scroll
+
+- debut on highlight where does user scroll go.
+
 - on user highlight keep scroll where it is. Maybe even keep highlight where it is potentially.
 
 - focus to user type
@@ -10,7 +16,7 @@ To Dos:
 
 - I need streaming
 
-- I need to be able to change the window size by dragging
+- I need to be able to change the window size by dragging the middle fold
 
   -------- CHORES -----------
 

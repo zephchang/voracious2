@@ -13,7 +13,6 @@ const Book = async ({
 }) => {
   const bookData: BookData = await fetchBookContent({ uuid: params.bookID });
   const chatID = searchParams.chatID;
-  console.log('CHAT ID', chatID);
 
   return (
     <div className={`app flex flex-row`}>

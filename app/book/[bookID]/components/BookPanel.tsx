@@ -1,5 +1,11 @@
 'use client';
-import { useLayoutEffect, useState, useRef, useCallback } from 'react';
+import {
+  useLayoutEffect,
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+} from 'react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { BookData } from '../utils/types';
 import { locateHighlight } from '../utils/locateHighlight';
@@ -20,6 +26,7 @@ const BookPanel = ({ bookData }: { bookData: BookData }) => {
   // will use these for re-alignment
   const rewrittenRef = useRef<HTMLDivElement>(null);
   const rawRef = useRef<HTMLDivElement>(null);
+  const bookContainerRef = useRef<HTMLDivElement>(null);
 
   // For checking if it's a new highlight (huh? why did I do this)
   const [lastSelection, setlastSelection] = useState<string>('');
@@ -27,6 +34,33 @@ const BookPanel = ({ bookData }: { bookData: BookData }) => {
   // Button position/visibility
   const [buttonVisible, setButtonVisible] = useState(false);
   const [buttonPosition, setButtonPosition] = useState({ top: 0, left: 0 });
+
+  /**THESE ARE DEBUGGING FOR SCROLL HEIGHT */
+  const [containerHeight, setContainerHeight] = useState(0);
+
+  useEffect(() => {
+    if (bookContainerRef.current) {
+      setContainerHeight(bookContainerRef.current.scrollHeight);
+    }
+  }, []);
+
+  const renderScrollMarkers = () => {
+    const markers = [];
+    for (let i = 0; i < containerHeight; i += 500) {
+      markers.push(
+        <div
+          key={`scroll-marker-${i}`}
+          className="absolute left-0 w-full h-[1px] bg-red-500 pointer-events-none"
+          style={{ top: `${i}px` }}
+        >
+          <span className="absolute left-2 bg-white text-red-500 text-xs">
+            {i}px
+          </span>
+        </div>
+      );
+    }
+    return markers;
+  };
 
   /**
    * Reset Heights of Paragraphs
@@ -105,6 +139,8 @@ const BookPanel = ({ bookData }: { bookData: BookData }) => {
   };
 
   const handleChatButtonClick = async () => {
+    const scrollPosition = window.scrollY;
+
     try {
       // Generate (1) highlight text (2) highlight location (3) highlight context --> send that all to the db to initialize conversation
       const highlightText = window.getSelection()?.toString();
@@ -133,22 +169,20 @@ const BookPanel = ({ bookData }: { bookData: BookData }) => {
       };
 
       const supabaseData = await initConvoWithLocation(convoData);
-      console.log(supabaseData);
       const conversationID = supabaseData.id;
 
       if (!conversationID) {
         throw new Error("Couldn't start a new conversation.");
-      } else {
-        console.log(
-          'Chat Click Success! Highlight highlightLocation:',
-          highlightLocation,
-          'Supabase gave us this convo id to use:',
-          conversationID
-        );
       }
 
       router.replace(`${pathname}?chatID=${conversationID}`);
       setButtonVisible(false);
+
+      setTimeout(() => {
+        if (bookContainerRef.current) {
+          bookContainerRef.current.scrollTo(0, scrollPosition);
+        }
+      }, 200); //timeout makes sure DOM get a chance to update
     } catch (error) {
       console.error('Error processing highlight:', error);
     }
@@ -159,6 +193,7 @@ const BookPanel = ({ bookData }: { bookData: BookData }) => {
   return (
     <>
       <div
+        ref={bookContainerRef}
         className={`book-container relative shadow-md
     ${
       searchParams.has('chatID')
@@ -193,6 +228,7 @@ const BookPanel = ({ bookData }: { bookData: BookData }) => {
           ))}
         </div>
         {renderChatButton()}
+        {renderScrollMarkers()}
       </div>
     </>
   );

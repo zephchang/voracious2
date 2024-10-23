@@ -45,13 +45,11 @@ export const ChatClient = ({
   /**
    * Handle Send Message
    * - optimistic UI update
-   * - call API to do LLM answer + update DB
-   * - await API response (will send back full convo), and update chatMessages state
+   * - send user message to getAIResponse
+   * - await response (only the aiMessage) and update chatMessages state.
    */
 
-  useEffect(() => {
-    console.log('chatMessages updated:', chatMessages);
-  }, [chatMessages]);
+  useEffect(() => {}, [chatMessages]);
 
   const handleSendMessage = async () => {
     console.log('chatMessages CHECK', chatMessages);
